@@ -1,6 +1,8 @@
 # car
 
-car - IMQ based service
+Cars data service for @imqueue tutorial application. Actually, it provides
+car manufacturer and model data initially selected from 
+[publicly available vehicle database](https://www.fueleconomy.gov/feg/ws/index.shtml).
 
 ## Usage
 

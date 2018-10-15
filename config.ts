@@ -21,8 +21,9 @@ import { config as initEnvironment } from 'dotenv';
 
 initEnvironment();
 
-/* check environments variables if required to bypass secrets */
-
 export const serviceOptions: Partial<IMQServiceOptions> = {
-    /* define your service-specific options here */
 };
+
+export const CARS_DATA_URL: string =
+    'https://www.fueleconomy.gov/feg/epadata/vehicles.csv.zip';
+export const CARS_DATA_UPDATE_INTERVAL = 24 * 3600 * 1000;
