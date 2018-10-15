@@ -36,7 +36,7 @@
   "author": "Imqueue Sandbox <support@imqueue.com>",
   "license": "ISC",
   "dependencies": {
-    "@imqueue/rpc": "^1.2.10",
+    "@imqueue/rpc": "^1.2.11",
     "dotenv": "^6.1.0"
   },
   "devDependencies": {

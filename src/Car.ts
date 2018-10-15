@@ -208,30 +208,46 @@ export class Car extends IMQService {
      * Returns car object by its identifier
      *
      * @param {string} id - car identifier
-     * @return {CarObject | null} - found object or null otherwise
+     * @param {string[]} [selectedFields] - fields to return
+     * @return {Partial<CarObject> | null} - found object or null otherwise
      */
     @profile()
     @expose()
-    public fetch(id: string): CarObject | null {
-        return this.data.hash[id] || null;
+    public fetch(
+        id: string,
+        selectedFields: string[]
+    ): Partial<CarObject> | null {
+        let car = this.data.hash[id] || null;
+
+        if (car && selectedFields && selectedFields.length) {
+            const newCar: any = {};
+            selectedFields.forEach((field: string) => {
+                newCar[field] = (car as any)[field];
+            });
+            car = newCar as CarObject;
+        }
+
+        return car;
     }
 
     /**
      * Returns list of known cars for a given brand
      *
      * @param {string} brand - car manufacturer (brand) name
-     * @param {string} sort - sort field, by default is 'model'
-     * @param {'asc' | 'desc'} dir - sort direction, by default is 'asc' - ascending
-     * @return {CarObject[]} - list of found car objects
+     * @param {string[]} [selectedFields] - fields to return
+     * @param {string} [sort] - sort field, by default is 'model'
+     * @param {'asc' | 'desc'} [dir] - sort direction, by default is 'asc' - ascending
+     * @return {Partial<CarObject>[]} - list of found car objects
      */
     @profile()
     @expose()
     public list(
         brand: string,
+        selectedFields?: string[],
         sort: string = 'model',
         dir: 'asc' | 'desc' = 'asc',
-    ): CarObject[] {
-        return this.data.brands[brand].sort((a: any, b: any) => {
+    ): Partial<CarObject>[] {
+        let cars = (this.data.brands[brand] || []).sort((a: any, b: any) => {
             if (a[sort] < b[sort]) {
                 return dir === 'asc' ? -1 : 1;
             } else if (a[sort] > b[sort]) {
@@ -239,6 +255,19 @@ export class Car extends IMQService {
             } else {
                 return 0;
             }
-        }) || [];
+        });
+
+        if (selectedFields && selectedFields.length) {
+            cars = cars.map((car: CarObject) => {
+                const newCar: any = {};
+                selectedFields.forEach((field: string) => {
+                    newCar[field] = (car as any)[field];
+                });
+
+                return newCar as CarObject;
+            });
+        }
+
+        return cars;
     }
 }
