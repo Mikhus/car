@@ -49,6 +49,7 @@ export class Car extends IMQService {
      * Overrides and adds service-specific async stuff to service
      * initialization
      */
+    @profile()
     public async start() {
         const ret = await super.start();
         const redis: IRedisClient = (this.imq as any).writer;
