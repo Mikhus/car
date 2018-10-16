@@ -29,6 +29,39 @@ import { CARS_DATA_URL, CARS_DATA_UPDATE_INTERVAL } from '../config';
 import { CarObject } from './types';
 
 const hash: any = require('murmurhash-native');
+const TYPES_MAP: { [name: string]: string } = {
+    'Two Seaters': 'mini',
+    'Subcompact Cars': 'mini',
+    Vans: 'large',
+    'Compact Cars': 'midsize',
+    'Midsize Cars': 'midsize',
+    'Large Cars': 'large',
+    'Small Station Wagons': 'large',
+    'Midsize-Large Station Wagons': 'large',
+    'Small Pickup Trucks': 'large',
+    'Standard Pickup Trucks': 'large',
+    'Special Purpose Vehicle 2WD': 'large',
+    'Special Purpose Vehicles': 'large',
+    'Minicompact Cars': 'mini',
+    'Special Purpose Vehicle 4WD': 'large',
+    'Midsize Station Wagons': 'large',
+    'Small Pickup Trucks 2WD': 'large',
+    'Standard Pickup Trucks 2WD': 'large',
+    'Standard Pickup Trucks 4WD': 'large',
+    'Minivan - 2WD': 'large',
+    'Sport Utility Vehicle - 4WD': 'large',
+    'Minivan - 4WD': 'large',
+    'Sport Utility Vehicle - 2WD': 'large',
+    'Small Pickup Trucks 4WD': 'large',
+    'Standard Pickup Trucks/2wd': 'large',
+    'Vans Passenger': 'large',
+    'Special Purpose Vehicles/2wd': 'large',
+    'Special Purpose Vehicles/4wd': 'large',
+    'Small Sport Utility Vehicle 4WD': 'large',
+    'Standard Sport Utility Vehicle 2WD': 'large',
+    'Standard Sport Utility Vehicle 4WD': 'large',
+    'Small Sport Utility Vehicle 2WD': 'large'
+};
 
 /**
  * Class Car - implements in-memory cars database with API access to cars data
@@ -144,7 +177,14 @@ export class Car extends IMQService {
                         ) {
                             return ;
                         }
-                        (car as any)[map[col].name] = cols[map[col].pos];
+
+                        let [name, value] = [map[col].name, cols[map[col].pos]];
+
+                        if (name === 'type') {
+                            value = TYPES_MAP[value];
+                        }
+
+                        (car as any)[name] = value;
                     }
                 }
 
