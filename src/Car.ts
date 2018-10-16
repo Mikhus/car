@@ -222,7 +222,9 @@ export class Car extends IMQService {
         if (car && selectedFields && selectedFields.length) {
             const newCar: any = {};
             selectedFields.forEach((field: string) => {
-                newCar[field] = (car as any)[field];
+                if ((car as any)[field] !== undefined) {
+                    newCar[field] = (car as any)[field];
+                }
             });
             car = newCar as CarObject;
         }
