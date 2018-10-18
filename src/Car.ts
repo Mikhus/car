@@ -256,7 +256,7 @@ export class Car extends IMQService {
     @expose()
     public fetch(
         id: string,
-        selectedFields: string[]
+        selectedFields?: string[]
     ): Partial<CarObject> | null {
         let car = this.data.hash[id] || null;
 
