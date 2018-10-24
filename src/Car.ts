@@ -246,31 +246,68 @@ export class Car extends IMQService {
     }
 
     /**
-     * Returns car object by its identifier
+     * Constructs partial car object from a given car object
      *
-     * @param {string} id - car identifier
+     * @param {CarObject | null} car
+     * @param {string[]} selectedFields
+     * @return {Partial<CarObject> | null}
+     * @access private
+     */
+    @profile()
+    private partialCar(
+        car: CarObject | null,
+        selectedFields: string[]
+    ): Partial<CarObject> | null {
+        if (!car) {
+            return null;
+        }
+
+        let newCar: Partial<CarObject> | null = car;
+
+        if (car && selectedFields && selectedFields.length) {
+            newCar = {};
+
+            selectedFields.forEach((field: string) => {
+                if ((car as any)[field] !== undefined) {
+                    (newCar as any)[field] = (car as any)[field];
+                }
+            });
+        }
+
+        return newCar;
+    }
+
+    /**
+     * Returns car object by its identifier or if multiple identifiers given
+     * as array of identifiers - returns a list of car objects.
+     *
+     * @param {string | string[]} id - car identifier
      * @param {string[]} [selectedFields] - fields to return
-     * @return {Partial<CarObject> | null} - found object or null otherwise
+     * @return {Partial<CarObject> | Partial<CarObject|null>[] | null} - found object or null otherwise
      */
     @profile()
     @expose()
     public fetch(
-        id: string,
+        id: string | string[],
         selectedFields?: string[]
-    ): Partial<CarObject> | null {
-        let car = this.data.hash[id] || null;
-
-        if (car && selectedFields && selectedFields.length) {
-            const newCar: any = {};
-            selectedFields.forEach((field: string) => {
-                if ((car as any)[field] !== undefined) {
-                    newCar[field] = (car as any)[field];
-                }
-            });
-            car = newCar as CarObject;
+    ): Partial<CarObject> | Partial<CarObject|null>[] | null {
+        if (!(id instanceof Array && id.length)) {
+            return this.partialCar(
+                this.data.hash[id as string] || null,
+                selectedFields || []
+            );
         }
 
-        return car;
+        const cars: Partial<CarObject | null>[] = [];
+
+        for (let carId of id) {
+            cars.push(this.partialCar(
+                this.data.hash[carId] || null,
+                selectedFields || []
+            ));
+        }
+
+        return cars;
     }
 
     /**
