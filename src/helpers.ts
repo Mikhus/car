@@ -51,15 +51,15 @@ export function toPartial(
         return null;
     }
 
-    let newCar: Partial<CarObject> | null = car;
+    if (!(car && selectedFields && selectedFields.length)) {
+        return car;
+    }
 
-    if (car && selectedFields && selectedFields.length) {
-        newCar = {};
+    const newCar: Partial<CarObject> | null = {};
 
-        for (let field of selectedFields) {
-            if ((car as any)[field] !== undefined) {
-                (newCar as any)[field] = (car as any)[field];
-            }
+    for (let field of selectedFields) {
+        if ((car as any)[field] !== undefined) {
+            (newCar as any)[field] = (car as any)[field];
         }
     }
 
