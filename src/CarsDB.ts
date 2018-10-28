@@ -294,30 +294,40 @@ export class CarsDB {
     }
 
     /**
+     * Ensures given item is not a given car duplicate. If so, checks if
+     * car contains whole set of years from duplicate
+     *
+     * @param {CarObject} car
+     * @param {CarObject} item
+     * @return {boolean}
+     */
+    private ensureDuplicate(car: CarObject, item: CarObject) {
+        const dup = (
+            item.make === car.make &&
+            item.model === car.model &&
+            item.type === car.type
+        );
+
+        if (dup) {
+            item.years = (item.years.concat(car.years));
+            item.years = item.years.filter(
+                (elem, pos) => item.years.indexOf(elem) === pos
+            );
+
+            item.years.sort();
+        }
+
+        return dup;
+    }
+
+    /**
      * Ensures given car object is a valid list item and if so -
      * pushes it to the list
      *
      * @param {CarObject} car
      */
     private ensureListItem(car: CarObject) {
-        if (!this.data.list.find((item) => {
-            const dup = (
-                item.make === car.make &&
-                item.model === car.model &&
-                item.type === car.type
-            );
-
-            if (dup) {
-                item.years = (item.years.concat(car.years));
-                item.years = item.years.filter(
-                    (elem, pos) => item.years.indexOf(elem) === pos
-                );
-
-                item.years.sort();
-            }
-
-            return dup;
-        })) {
+        if (!this.data.list.find(this.ensureDuplicate.bind(this, car))) {
             car.id = hash.murmurHash128x64(String([
                 car.make, car.model, car.type
             ]));
