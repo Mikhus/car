@@ -8,7 +8,7 @@
 import { CarObject } from './types';
 
 export function carPush(arr: any[], obj: any) {
-    if (obj) {
+    if (obj && !arr.find(item => obj.id === item.id)) {
         arr.push(obj);
     }
 
