@@ -156,34 +156,18 @@ export class CarsDB {
      */
     public async load() {
         return new Promise((resolve, reject) => {
-            const reader: ReadLine = createInterface({
-                input: createReadStream(`${this.dataFile}`)
-            });
             const map: FieldsMap = {
                 make:  { name: 'make', pos: 0 },
                 model: { name: 'model', pos: 0 },
                 VClass: { name: 'type', pos: 0 },
                 year: { name: 'year', pos: 0 },
             };
-            let count = 0;
-
-            reader.on('line', (line: string) => {
-                const cols = line.split(',');
-
-                if (count === 0) {
-                    this.parseHeader(cols, map);
-                    return ++count;
-                }
-
-                const car = this.createCarObject(map, cols);
-
-                if (!car) {
-                    return ;
-                }
-
-                this.ensureListItem(car);
+            const reader: ReadLine = createInterface({
+                input: createReadStream(`${this.dataFile}`)
             });
 
+            this.headerParsed = false;
+            reader.on('line', this.parseLine.bind(this, map));
             reader.on('close', resolve);
             reader.on('error', reject);
         });
@@ -226,6 +210,36 @@ export class CarsDB {
      */
     public cars(brand: string) {
         return this.data.brands[brand] || [];
+    }
+
+    /**
+     * Becomes true when the header found and parsed on db file load
+     * @type {boolean}
+     */
+    private headerParsed = false;
+
+    /**
+     * Parses line of data from db file
+     *
+     * @param {FieldsMap} map
+     * @param {string} line
+     */
+    private parseLine(map: FieldsMap, line: string) {
+        const cols = line.split(',');
+
+        if (!this.headerParsed) {
+            this.parseHeader(cols, map);
+            this.headerParsed = true;
+            return ;
+        }
+
+        const car = this.createCarObject(map, cols);
+
+        if (!car) {
+            return ;
+        }
+
+        this.ensureListItem(car);
     }
 
     /**
