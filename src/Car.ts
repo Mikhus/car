@@ -89,6 +89,7 @@ export class Car extends IMQService {
         ));
     }
 
+    // codebeat:disable[ARITY]
     /**
      * Returns list of known cars for a given brand
      *
@@ -111,5 +112,6 @@ export class Car extends IMQService {
             .reduce((cars, car) => carPush(cars, toPartial(car)), [])
         ;
     }
+    // codebeat:enable[ARITY]
 
 }
