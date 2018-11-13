@@ -20,7 +20,7 @@
     "start": "NODE_ENV=production /usr/bin/env node ./index.js",
     "dev:ts": "NODE_ENV=development ts-node index.ts",
     "dev": "npm run clean:dts && npm run clean:map && npm run clean:js && ./node_modules/nodemon/bin/nodemon.js",
-    "docker:build": "docker build -f Dockerfile -t car .",
+    "docker:build": "tsc && docker build -f Dockerfile -t car .",
     "docker:run": "docker run --rm -it --name car car",
     "docker:stop": "docker stop car",
     "docker:ssh": "docker exec -it car sh"
