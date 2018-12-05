@@ -34,3 +34,4 @@ debug*
 .DS_Store
 Thumbs.db
 data/
+package-lock.json
